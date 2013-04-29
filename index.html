@@ -3,14 +3,58 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Template &middot; Bootstrap</title>
+    <title>My first WebPgRouting app</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
 
+    <!-- Le styles -->
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="assets/css/styles.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 20px;
+        padding-bottom: 40px;
+      }
+
+      /* Custom container */
+      .container-narrow {
+        margin: 0 auto;
+        max-width: 1024px;
+      }
+      .container-narrow > hr {
+        margin: 30px 0;
+      }
+
+      /* Main marketing message and sign up button */
+      .jumbotron {
+        margin: 60px 0;
+        text-align: center;
+      }
+      .jumbotron h1 {
+        font-size: 72px;
+        line-height: 1;
+      }
+      .jumbotron .btn {
+        font-size: 21px;
+        padding: 14px 24px;
+      }
+
+
+      #map {
+        width: 100%;
+        height: 400px;
+      }
+      /* correct a bug with bootstrap */
+      #map img {
+        max-width: inherit;
+
+      }
+      .actions {
+        margin-bottom: 1em;
+      }
+    </style>
+
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -23,41 +67,44 @@
     <div class="container-narrow">
 
       <div class="masthead">
-        <h1>Demo pgRouting</h1>
+        <h3 class="muted">Demo pgRouting</h3>
       </div>
       <div class="actions row-fluid">
         <fieldset class="span12">
             <legend>Actions</legend>
             <div id="point_selector" class="btn-group">
               <button class="start btn active">Set Starpoint</button>
-              <button class="end btn">Set Endpoint</button>
+              <button class="end btn">Set endpoint</button>
             </div>
           <button id="search" class="btn btn-primary" type="button">Search</button>
         </fieldset>
       </div>
-      <div id="map"></div>
+       <div id="map"></div>
       <hr>
-      <div class="row-fluid">
-        <div class="span12">
-          <h2>Récupérer l'id et les coordonnées du sommet le plus proche correspondant à une coordonnée</h2>
-          <p>
 
-<pre>
-SELECT id, x(the_geom), y(the_geom)
+      <div class="row-fluid marketing">
+        <div class="span12">
+          <h4>Récupérer le sommet le plus proche correspondant à une coordonée</h4>
+          <p>
+            <pre>
+SELECT
+  id,
+  x(the_geom),
+  y(the_geom)
 FROM vertices_tmp
 WHERE id = (
   SELECT id(foo.x) as id
   FROM (
-    SELECT find_node_by_nearest_link_within_distance('POINT(longitude latitude)',  0.5, 'ways')::link_point as x
+    SELECT find_node_by_nearest_link_within_distance( 'POINT(longitude_value latitude_value)',  0.5, 'ways')::link_point as x
   ) AS foo
-);</pre>
+) </pre>
           </p>
 
 
-          <h2>Recherche d'un itinéraire entre deux sommet</h2>
+          <h4>Recherche d'un itinéraire entre deux sommet</h4>
           <p>
             <pre>
-SELECT st_union(the_geom) as geometry
+SELECT st_asgeojson(st_transform(st_union(the_geom), 900913)) as geometry
 FROM ways
 WHERE gid in (
   SELECT edge_id
@@ -67,41 +114,20 @@ WHERE gid in (
       target::integer,
       to_cost as cost,
       reverse_cost
-    FROM ways',
-    id_sommet_de_depart,
-    id_sommet_d_arrivee,
-    false,
-    false
-  )
-);</pre>
+      FROM ways',
+      start_vertice_id,
+      end_vertice_id,
+      false,
+      false)
+    );</pre>
           </p>
-          <h2>Pseudo algorithme de l'application</h2>
-<pre>
-Lorsque l'utilisateur clique sur start ou end point:
-  - Ajouter la classe "active" à l'élément courant
-  - Enlever la classe "active" à l'autre élément
-  - Définir que le drawControl fonctionne sur le layer correspondant à l'élément courant
-
-Lorsque l'utilisateur clique sur la carte:
-  - Création d'une feature sur le bon layer
-  - Envoi d'une requête ajax pour vérifier s'il existe un sommet
-    du réseau routier à proximité
-    - Oui: Correction de la position de la feature et récupération de l'id
-    - Non: Avertir l'utilisateur et supprimer la feature
-
-Lorsque l'utilisateur clique sur le bouton "Search"
-  - Pour autant :
-    - qu'il existe une feature sur chaque layer
-    - que chaque feature possède bien un id référencant un sommet
-  - Alors mettre à jour l'URL de la couche et lui demander de se rafraîchir
-</pre>
         </div>
       </div>
 
       <hr>
 
       <div class="footer">
-        <p>&copy;<a href="http://www.heig-vd.ch">heig-vd</a> @ 2013</p>
+        <p>&copy; <a href="http://www.heig-vd.ch">heig-vd</a> 2013</p>
       </div>
 
     </div> <!-- /container -->
@@ -110,7 +136,8 @@ Lorsque l'utilisateur clique sur le bouton "Search"
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="assets/js/jquery.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/bootstrap.js"></script>
+
     <script src="assets/js/openlayers/OpenLayers.js"></script>
     <script src="assets/js/map.js"></script>
   </body>
