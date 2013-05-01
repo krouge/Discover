@@ -17,8 +17,8 @@ function findCanton(){
             function(data) {
                 var i =0
                 $.each(data, function(key, value){
-                    i++
-                    alert(i)
+                    
+                    console.log(key)
                     var div =$('<div class="ui-collapsible ui-collapsible-inset ui-collapsible-themed-content ui-collapsible-collapsed ui-first-child ui-last-child" data-role="collapsible"><h2 class="ui-collapsible-heading ui-collapsible-heading-collapsed">'+key+'</2></div>')
        
                     div.appendTo("#total")
