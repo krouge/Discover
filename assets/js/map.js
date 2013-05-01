@@ -1,12 +1,12 @@
-var map, pointLayer1, pointLayer2, lineLayer, control, gpxLayer, baseurl, feature;
+var map, pointLayer1, pointLayer2, lineLayer, control, gpxLayer, baseurl, feature, geoJSONText;
 
 var actualLayer = 1;
 var nbrPoints = 0;
 
 function addQuestion() {
-        $(".enigmeContent").append('<span class="reponseContent"><div style="float:left; width:400px"><input type="text" name="rep1" id="rep1" /></div><div style="float:left; width:100px; text-align:center"><input type="radio" name="reponses" value="1"/></div></span>');
-        
-    }
+    $(".enigmeContent").append('<span class="reponseContent"><div style="float:left; width:400px"><input type="text" name="rep1" id="rep1" /></div><div style="float:left; width:100px; text-align:center"><input type="radio" name="reponses" value="1"/></div></span>');
+
+}
 $(document).ready(function() {
 
     // A CONFIGURER !!!
@@ -82,8 +82,8 @@ $(document).ready(function() {
     control.activate();
 
     /*selectControl = new OpenLayers.Control.SelectFeature(pointLayer1, {click: true});
-    map.addControl(selectControl);
-    selectControl.activate();*/
+     map.addControl(selectControl);
+     selectControl.activate();*/
 
     // enregistrement d'un écouteur sur l'événement beforefeatureadded (avant insertion) :
     // - on vide la couche pointLayer1
@@ -93,7 +93,7 @@ $(document).ready(function() {
         pointLayer1.removeAllFeatures();
         e.feature.attributes.type = '1';
     });
- 
+
     // idem, enregistrement d'un écouteur sur l'événement beforefeatureadded sur pointLayer2
     // (on vide les couches et on tague avec la valeur 'end')
     pointLayer2.events.register('beforefeatureadded', control, function(e) {
@@ -112,23 +112,23 @@ $(document).ready(function() {
         pointLayer5.removeAllFeatures();
         e.feature.attributes.type = '5';
     });
-    
+
     pointLayer1.events.register('featureadded', control, point_suivant);
     pointLayer1.events.register("featureadded", control, onFeatureAdd);
     pointLayer1.events.register("featureunselected", control, onFeatureUnselect);
-    
+
     pointLayer2.events.register('featureadded', control, point_suivant);
     pointLayer2.events.register("featureadded", control, onFeatureAdd);
     pointLayer2.events.register("featureunselected", control, onFeatureUnselect);
-    
+
     pointLayer3.events.register('featureadded', control, point_suivant);
     pointLayer3.events.register("featureadded", control, onFeatureAdd);
     pointLayer3.events.register("featureunselected", control, onFeatureUnselect);
-    
+
     pointLayer4.events.register('featureadded', control, point_suivant);
     pointLayer4.events.register("featureadded", control, onFeatureAdd);
     pointLayer4.events.register("featureunselected", control, onFeatureUnselect);
-    
+
     pointLayer5.events.register('featureadded', control, point_suivant);
     pointLayer5.events.register("featureadded", control, onFeatureAdd);
     pointLayer5.events.register("featureunselected", control, onFeatureUnselect);
@@ -163,18 +163,18 @@ $(document).ready(function() {
         }
 
     }
-    
+
     // Editer les informations de l'étape
     $(document).on('click', '.edit', function() {
         if (map.popups.length != 0) {
             map.removePopup(map.popups[0]);
         }
-        
+
         //************** Problème ici **************//
         control.layer = eval("pointLayer" + ($(this).attr("name")));
         console.log("Layer sous controle: pointLayer" + ($(this).attr("name")));
         //************** Problème ici **************//
-        
+
         newPopup(eval("pointLayer" + ($(this).attr("name"))).features[0]);
     });
 
@@ -186,7 +186,7 @@ $(document).ready(function() {
         actualLayer = ($(this).attr("name"));
         control.layer = eval("pointLayer" + ($(this).attr("name")));
     });
-    
+
     // Supprimer la dernière étape
     $("#remove").click(function() {
         if (map.popups.length != 0) {
@@ -208,19 +208,19 @@ $(document).ready(function() {
     function newPopup(feature) {
         var affichageReponses = new Array();
         var checked;
-        if(feature.attributes.reponses != null){
-            for(var i = 0;i < feature.attributes.reponses.length;i++){
-                if(feature.attributes.reponseJuste == (i+1)){
+        if (feature.attributes.reponses != null) {
+            for (var i = 0; i < feature.attributes.reponses.length; i++) {
+                if (feature.attributes.reponseJuste == (i + 1)) {
                     checked = "checked";
-                }else{
+                } else {
                     checked = "";
                 }
-                affichageReponses+='<span class="reponseContent"><div style="float:left; width:400px"><input type="text" name="rep1" id="rep1" value="'+feature.attributes.reponses[i]+'" /></div><div style="float:left; width:100px; text-align:center"><input type="radio" name="reponses" value="1" '+checked+'/></div></span>';
-                if(i == 0){
+                affichageReponses += '<span class="reponseContent"><div style="float:left; width:400px"><input type="text" name="rep1" id="rep1" value="' + feature.attributes.reponses[i] + '" /></div><div style="float:left; width:100px; text-align:center"><input type="radio" name="reponses" value="1" ' + checked + '/></div></span>';
+                if (i == 0) {
                     affichageReponses += '<a href="#" class="addQuestion" onclick="addQuestion();"><img src="assets/img/add.png" /></a></span>';
                 }
             }
-        }else{
+        } else {
             affichageReponses = '<span class="reponseContent"><div style="float:left; width:400px"><input type="text" name="rep1" id="rep1" /></div><div style="float:left; width:100px; text-align:center"><input type="radio" name="reponses" value="1"/></div></div><a href="#" class="addQuestion" onclick="addQuestion();"><img src="assets/img/add.png" /></a></span>';
         }
         //affichageReponses += '</div>';
@@ -248,10 +248,10 @@ $(document).ready(function() {
         var i = 0;
         popup.feature.attributes["enigme"] = $(".enigme").val();
         $('.reponseContent').each(function() {
-            reponses[i] = $('input[type="text"]',this).val();
+            reponses[i] = $('input[type="text"]', this).val();
             //console.log($('input[type="radio"]',this).val());
-            if($('input[type="radio"]',this).is(':checked')){
-                reponseJuste = (i+1);
+            if ($('input[type="radio"]', this).is(':checked')) {
+                reponseJuste = (i + 1);
             }
             i++;
         });
@@ -278,50 +278,67 @@ $(document).ready(function() {
             //feature.popup = null;
         }
     }
-    $(document).on('click','.addQuestion',function(){
+    $(document).on('click', '.addQuestion', function() {
         alert("test");
         $(".enigmeContent").append('<div style="float:left; width:400px"><input type="text" name="rep1" id="rep1" /></div><div style="float:left; width:100px; text-align:center"><input type="radio" /></div><img src="assets/img/add.png" />');
-        
+
     });
-    
-    
-    $("#save").click(function(){
+
+
+    $("#save").click(function() {
         $("#saveBox").css("visibility", "visible");
         $("#saveContent").css("visibility", "visible");
         var geoJSON = new OpenLayers.Format.GeoJSON();
-        var geoJSONText;
         var text = '{"parcours":[';
         geoJSONText = text;
-        geoJSONText += '{"point1":[';
+        geoJSONText += '{"point":[';
         geoJSONText += geoJSON.write(pointLayer1.features);
         geoJSONText += ']}'
-        if(pointLayer2.features != ""){
-            geoJSONText += ',{"point2":[';
+        if (pointLayer2.features != "") {
+            geoJSONText += ',{"point":[';
             geoJSONText += geoJSON.write(pointLayer2.features);
             geoJSONText += ']}'
         }
-        if(pointLayer3.features != ""){
-            geoJSONText += ',{"point3":[';
+        if (pointLayer3.features != "") {
+            geoJSONText += ',{"point":[';
             geoJSONText += geoJSON.write(pointLayer3.features);
             geoJSONText += ']}'
         }
-        if(pointLayer4.features != ""){
-            geoJSONText += ',{"point4":[';
+        if (pointLayer4.features != "") {
+            geoJSONText += ',{"point":[';
             geoJSONText += geoJSON.write(pointLayer4.features);
             geoJSONText += ']}'
         }
-        if(pointLayer5.features != ""){
-            geoJSONText += ',{"point5":[';
+        if (pointLayer5.features != "") {
+            geoJSONText += ',{"point":[';
             geoJSONText += geoJSON.write(pointLayer5.features);
             geoJSONText += ']}'
         }
         geoJSONText += ']}';
-        
+
         console.log(geoJSONText);
     });
-    
-    $("#annuler").click(function(){
+
+    $("#annuler").click(function() {
         $("#saveBox").css("visibility", "hidden");
         $("#saveContent").css("visibility", "hidden");
+    });
+
+    $("#ajouter").click(function() {
+        if($("#nomParcours").val() == ""){
+            alert("Vous devez entrer un nom de parcours");
+        }else{
+            $.post("dispatcher.php",
+                    {
+                        controlleur: "Parcours",
+                        action: "enregistrerParcours",
+                        json: geoJSONText,
+                        nomParcours: $("#nomParcours").val(),
+                        lieuParcours: $("#lieuParcours").val()
+                    },
+            function(data) {
+                console.log(data);
+            });
+        }
     });
 });

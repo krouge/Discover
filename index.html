@@ -100,15 +100,15 @@
     <body>
         <div id="saveContent">
             <label for="nomParcours">Nom du parcours :</label>
-            <input type="text" name="nomParcours"/>
+            <input type="text" name="nomParcours" id="nomParcours"/>
             <label for="region">Région de départ :</label>
-            <select>
+            <select name="lieuParcours" id="lieuParcours">
                 <option value="vaud">Vaud</option>
                 <option value="valais">Valais</option>
                 <option value="fribourg">Fribourg</option>
                 <option value="neuchatel">Neuchâtel</option>
             </select><br/><br/>
-            <input type="submit" value="Enregistrer le parcours" />
+            <input type="submit" id="ajouter" value="Enregistrer le parcours" />
             <input type="button" id="annuler" value="Annuler" />
         </div>
         <div id="saveBox"></div>
