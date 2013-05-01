@@ -1,4 +1,5 @@
 <?php
+
 include('connection.php');
 
 // definition du MIME-TYPE du contenu JSON
