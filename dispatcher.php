@@ -6,14 +6,14 @@
     require_once 'controlleur/ParcoursControlleur.php';
     require_once 'manager/ParcoursManager.php';
     
-    if (isset($_GET['controlleur'])){
-                    $nomControlleur = $_GET['controlleur'];
+    if (isset($_REQUEST['controlleur'])){
+                    $nomControlleur = $_REQUEST['controlleur'];
     }else{
                     $nomControlleur = "";
     }
 
-    if (isset($_GET['action'])){
-                    $action = $_GET['action'];
+    if (isset($_REQUEST['action'])){
+                    $action = $_REQUEST['action'];
     }else{
                     $action = "";
     }
@@ -21,6 +21,7 @@
     $className = $nomControlleur.'Controlleur';
     $controlleur = new $className();
     $controlleur->$action();
+    
     
 ?>
     
