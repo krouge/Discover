@@ -1,6 +1,22 @@
 var map;
 
-$(document).ready(function() {
+function GetURLParameter(sParam)
+{
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++)
+    {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam)
+        {
+            return sParameterName[1];
+        }
+    }
+}
+
+
+
+        $(document).ready(function() {
 
     map = new OpenLayers.Map({
         div: "map",
@@ -23,8 +39,14 @@ $(document).ready(function() {
     lgpx = new OpenLayers.Layer.Vector("Etapes", {
         styleMap: myStyles,
         protocol: new OpenLayers.Protocol.HTTP({
-            url: "dispatcher.php?controlleur=Parcours&action=getAllParcours",
-            format: new OpenLayers.Format.GeoJSON(),
+            url: "dispatcher.php",
+            params: {
+                controlleur: "Parcours",
+                action: "getParcours",
+                id: GetURLParameter('id'),
+                numEtape: 1
+            },
+            format: new OpenLayers.Format.GeoJSON()
         }),
         strategies: [new OpenLayers.Strategy.Fixed()],
         projection: new OpenLayers.Projection("EPSG:21781")
@@ -80,22 +102,22 @@ $(document).ready(function() {
         }
     }
     ;
-    
+
     lgpx.events.register("featureselected", lgpx, onFeatureSelect);
     lgpx.events.register("featureunselected", lgpx, onFeatureUnselect);
-    
+
     function onPopupClose(evt) {
-                // 'this' is the popup.
-                control.unselect(this.feature);
-            }
+        // 'this' is the popup.
+        control.unselect(this.feature);
+    }
     function onFeatureSelect(evt) {
         feature = evt.feature;
         popup = new OpenLayers.Popup.FramedCloud("featurePopup",
                 feature.geometry.getBounds().getCenterLonLat(),
                 new OpenLayers.Size(100, 100),
                 '<h2>' + feature.attributes.nom + '</h2>' +
-                'Canton de départ: '+feature.attributes.canton+'<br />'+
-                'Nombre d\'étapes: '+feature.attributes.nbrEtapes+'<br />'+
+                'Canton de départ: ' + feature.attributes.canton + '<br />' +
+                'Nombre d\'étapes: ' + feature.attributes.nbrEtapes + '<br />' +
                 '<input type="submit" id="choixParcours" value="Jouer!" />',
                 null,
                 true,
