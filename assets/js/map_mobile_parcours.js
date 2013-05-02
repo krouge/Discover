@@ -36,7 +36,7 @@ function GetURLParameter(sParam)
         })
     });
 
-    lgpx = new OpenLayers.Layer.Vector("Etapes", {
+    lgpx = new OpenLayers.Layer.Vector("Etape", {
         styleMap: myStyles,
         protocol: new OpenLayers.Protocol.HTTP({
             url: "dispatcher.php",
