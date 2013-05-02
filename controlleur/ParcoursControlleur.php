@@ -36,6 +36,10 @@ class ParcoursControlleur {
           
               //echo $latPoint1." - ".$lonPoint1." - ".$questionPoint1." - ".$reponsesPoint1." - ".$numReponseJuste." - ".$_POST['nomParcours']." - ".$_POST['lieuParcours'];
     }
+    
+    public function getParcours(){
+        echo $this->parcoursManager->getParcours();
+    }
 
 }
 
