@@ -1,10 +1,12 @@
 $("document").ready(function(){
     
     findCanton();
+    
+    
 
 });
     
-    
+
 function findCanton(){
 
     $.getJSON(
@@ -16,33 +18,28 @@ function findCanton(){
 
             function(data) {
                 var i =0
+                var ul = $('<ul class="ui-listview ui-listview-inset ui-corner-all ui-shadow ui-icon-alt" data-inset="true" data-role="listview"/>')
                 $.each(data, function(key, value){
                     
-                    var div = $('<div class="ui-collapsible ui-collapsible-inset ui-collapsible-themed-content ui-first-child ui-last-child ui-collapsible-collapsed" data-role="collapsible"/>')
-                    var h2 = $('<h2 class="ui-collapsible-heading ui-collapsible-heading-collapsed"/>')
-                    var a = $('<a class="ui-collapsible-heading-toggle ui-btn ui-btn-icon-left ui-btn-up-b" href="#" data-corners="false" data-shadow="false" data-iconshadow="true" data-wrapperels="span" data-icon="plus" data-iconpos="left" data-theme="b"/>')
-                    var spanInner = $('<span class="ui-btn-inner"/>')
-                    var spanText = $('<span class="ui-btn-text"/>').html(key)
+                    var li = $('<li class="ui-btn ui-btn-icon-right ui-li-has-arrow ui-li ui-btn-up-c" data-corners="false" data-shadow="false" data-iconshadow="true" data-wrapperels="div" data-icon="arrow-r" data-iconpos="right" data-theme="c"/>')
+                    var divInner = $('<div class="ui-btn-inner ui-li"/>')
+                    var divText = $('<div class="ui-btn-text"/>')
+                    var a = $('<a class="ui-link-inherit link" data-transition="slide" href="mobile_parcours.html?canton='+key+'"/>').html(key)
+
+                    divText.append(a)
+                    divInner.append(divText)
+                    li.append(divInner)
+                    var wrapper = ul.append(li)
                     
-                    console.log(key)
-                    
-                    
-                    spanInner.append(spanText)
-                    a.append(spanInner)
-                    h2.append(a)
-                    var wrapper = div.append(h2)
-                    
-                  //  wrapper.append(a)
                     wrapper.appendTo('#total')
                     
-                    //div.append(h2).append(a).append(spanInner).append(spanText).appendTo('#total')
-                    //spanInner.append(spanText).appendTo('#total');
-                    //spanText.append(spanInner).appendTo('#total')
-                    //$('#title').append('<div data-role="collapsible"><h2>'+key+'</2></div>');
+                    
                     $.each(value, function(key, value){
                         console.log(key, value);
                     });
                 });
             }
     );
+        
+
 }

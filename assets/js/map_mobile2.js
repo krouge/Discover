@@ -1,4 +1,17 @@
 var map;
+var newPersonne;
+var lon, lat, valeurCache, watchId, currentLon, currentLat;
+var exitApplication=true;
+var markersId = new Object();
+var personnesSelected = new Array();
+var personnes = new Array("Yann");
+var selfIsSelected=false;
+var firstPosition=true;
+var interval;
+var lonLat;
+var markers;
+var marker;
+
 
 $(document).ready(function() {
 
@@ -11,66 +24,59 @@ $(document).ready(function() {
     var osm = new OpenLayers.Layer.OSM();
     map.addLayer(osm);
 
-    var myStyles = new OpenLayers.StyleMap({
-        "default": new OpenLayers.Style({
-            externalGraphic: "assets/img/dot_1.png",
-            strokeColor: "#FF0000",
-            graphicHeight: 40,
-            graphicYOffset: -43,
-        })
-    });
 
-    lgpx = new OpenLayers.Layer.Vector("Etapes", {
-        styleMap: myStyles,
-        protocol: new OpenLayers.Protocol.HTTP({
-            url: "dispatcher.php?controlleur=Parcours&action=getParcours",
-            format: new OpenLayers.Format.GeoJSON(),
-        }),
-        strategies: [new OpenLayers.Strategy.Fixed()],
-        projection: new OpenLayers.Projection("EPSG:21781")
-
-    });
-    map.addLayer(lgpx);
-
-    control = new OpenLayers.Control.SelectFeature(lgpx);
-    map.addControl(control);
-    control.activate();
+    onMapLoaded();
+    setInterval('changePosition();',1000)
+});
+    
 
 
-    var watchId = navigator.geolocation.watchPosition(successCallback, errorCallback, {maximumAge: 3000, enableHighAccuracy: true});
+    function onMapLoaded() {
 
-    function successCallback(position) {
 
-        var lonLat = new OpenLayers.LonLat(position.coords.longitude, position.coords.latitude)
+            navigator.geolocation.getCurrentPosition(currentPositionSuccess, errorCallback, {
+                enableHighAccuracy : true, 
+                timeout:3000, 
+                maximumAge:0
+
+        });
+
+    }
+
+
+    /**
+     * Fonction appelée lorsque l'annonce de la position a correctement fonctionné
+     */ 
+    function currentPositionSuccess(location) { 
+
+        currentLat = location.coords.latitude;
+        currentLon = location.coords.longitude;
+
+        lonLat = new OpenLayers.LonLat(currentLon, currentLat)
                 .transform(
                 new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
                 map.getProjectionObject() // to Spherical Mercator Projection
                 );
 
-        /*var lgpx = new OpenLayers.Layer.Vector("European cities", {
-         protocol: new OpenLayers.Protocol.HTTP({
-         url: "dispatcher.php?controlleur=Parcours&action=getParcours",
-         format: new OpenLayers.Format.GeoJSON()
-         }),
-         strategies: [new OpenLayers.Strategy.Fixed()],
-         projection: new OpenLayers.Projection("EPSG:4326")
-         });
-         map.addLayer(lgpx);*/
 
-
-        var zoom = 10;
-        var markers = new OpenLayers.Layer.Markers("Markers");
+        var zoom = 18;
+        markers = new OpenLayers.Layer.Markers("Markers");
         map.addLayer(markers);
-        markers.addMarker(new OpenLayers.Marker(lonLat));
+        marker = new OpenLayers.Marker(lonLat);
+        markers.addMarker(marker);
         map.setCenter(lonLat, zoom);
-    }
-    ;
 
-    function errorCallback(error) {
-        switch (error.code) {
+        changePosition();
+
+    }
+
+
+
+    function errorCallback(error){
+        switch(error.code){
             case error.PERMISSION_DENIED:
                 alert("L'utilisateur n'a pas autorisé l'accès à sa position");
-                break;
+                break;      
             case error.POSITION_UNAVAILABLE:
                 alert("L'emplacement de l'utilisateur n'a pas pu être déterminé");
                 break;
@@ -79,8 +85,49 @@ $(document).ready(function() {
                 break;
         }
     }
-    ;
+
+
+    function changePosition(){    
+            
+            markers.removeMarker(marker);
+            
+            currentLat += 0.00003;
+            currentLon += 0.00002;
+            
+            lonLat = new OpenLayers.LonLat(currentLon, currentLat)
+                .transform(
+                new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+                map.getProjectionObject() // to Spherical Mercator Projection
+                );
+            
+            marker = new OpenLayers.Marker(lonLat);
+
+            markers.addMarker(marker);
+
+            map.addLayer(markers);
+
+            
+
+
+    }
     
+    
+
+    
+
+/**
+ * Fonction faisant bouger l'utilisateur virtuel Yann
+ */ 
+
+
+
+    
+    
+    
+    
+    
+    
+    /*
     lgpx.events.register("featureselected", lgpx, onFeatureSelect);
     lgpx.events.register("featureunselected", lgpx, onFeatureUnselect);
     
@@ -112,7 +159,6 @@ $(document).ready(function() {
             feature.popup.destroy();
             feature.popup = null;
         }
-    }
+    }*/
 
-});
 
