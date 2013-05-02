@@ -46,7 +46,7 @@ class ParcoursControlleur {
     }
     
     public function testPosition(){
-        return $this->parcoursManager->testPosition($_GET['lat'],$_GET['lon'],$_GET['posEtape']);
+        echo $this->parcoursManager->testPosition($_GET['lat'],$_GET['lon'],$_GET['latEtape'],$_GET['lonEtape']);
     }
 
 }

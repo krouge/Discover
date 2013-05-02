@@ -153,17 +153,17 @@ class ParcoursManager {
         return json_encode($fc);
     }
     
-    public function testPosition($lat,$lon){
+    public function testPosition($lat,$lon,$latEtape,$lonEtape){
         $conn_string = "host=ogovm port=5432 dbname=discover user=postgres password=postgres connect_timeout=1";
         $conn = pg_connect($conn_string);
         
-        $query="select ST_Distance(ST_GeomFromText('POINT ".$lat." ".$lon."'),".$posEtape.")";
-        $distance = pg_fetch_result($query);
+        $query="select ST_Distance(ST_GeomFromText('POINT (".$lon." ".$lat.")'),ST_GeomFromText('POINT (".$lonEtape." ".$latEtape.")'))";
+        $distance = pg_fetch_result(pg_query($query),0,0);
         
         if($distance <= 550){
-            return true;
+            return "true";
         }else{
-            return false;
+            return "false";
         }
     }
 
