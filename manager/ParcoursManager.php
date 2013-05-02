@@ -51,7 +51,7 @@ class ParcoursManager {
 
             $canton = $row['canton'];
 
-            $queryCanton = "SELECT nom FROM parcours WHERE canton = '$canton'";
+            $queryCanton = "SELECT nom,parcours_id FROM parcours WHERE canton = '$canton'";
             $rs2 = pg_query($conn, $queryCanton);
 
             $array = array();
@@ -59,6 +59,8 @@ class ParcoursManager {
             while ($row2 = pg_fetch_assoc($rs2)) {
 
                 $tab['nom'] = $row2['nom'];
+                $tab['parcours_id'] = $row2['parcours_id'];
+                
                 array_push($array, $tab);
             }
 
