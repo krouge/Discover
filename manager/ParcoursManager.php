@@ -106,11 +106,11 @@ class ParcoursManager {
 //          $numReponseJuste = $obj["parcours"][0]["point1"][0]["features"]["0"]["properties"]["reponseJuste"];
     }
 
-    public function getParcours() {
+    public function getAllParcours() {
         $conn_string = "host=ogovm port=5432 dbname=discover user=postgres password=postgres connect_timeout=1";
         $conn = pg_connect($conn_string);
 
-        $query = "select parcours_id, ST_AsGeoJSON(position), etape_id from (SELECT distinct on(parcours_id) parcours_id, etape_id,position from etape)as t order by etape_id";  // essayez avec 'Africa'
+        $query = "select distinct on (parcours.parcours_id) parcours.parcours_id, parcours.nom, parcours.canton, (SELECT count(etape_id) from etape where parcours_id = parcours.parcours_id) as nbr_etapes ,ST_AsGeoJSON(position), etape_id from etape inner join parcours on etape.parcours_id =parcours.parcours_id order by parcours.parcours_id";  // essayez avec 'Africa'
         $result = pg_query($conn, $query);
 
         if (!$result) {
@@ -120,10 +120,49 @@ class ParcoursManager {
 
         $fc = new FeatureCollection();
         while ($row = pg_fetch_row($result)) {
-            $fc->addFeature(new Feature($row[2], json_decode($row[1]),"hello world"));
+            $fc->addFeature(new Feature($row[1], json_decode($row[4]),array("nom"=>$row[1],"canton"=>$row[2],"nbrEtapes"=>$row[3])));
         }
 
         return json_encode($fc);
+    }
+    
+    public function getParcours($id,$numEtape) {
+        $conn_string = "host=ogovm port=5432 dbname=discover user=postgres password=postgres connect_timeout=1";
+        $conn = pg_connect($conn_string);
+
+        $query = "select etape.etape_id, enigme_id, question, ST_AsGeoJSON(position) from etape inner join enigme on etape.etape_id = enigme.etape_id where parcours_id = ".$id."limit 1 offset ".($numEtape - 1);  // essayez avec 'Africa'
+        $result = pg_query($conn, $query);
+
+        if (!$result) {
+            echo "Oups!!! " . pg_last_error($conn);
+            exit;
+        }
+        $reponses = array();
+        $fc = new FeatureCollection();
+        while($row = pg_fetch_row($result)){
+            $queryReponse="select reponse, estcorrect from reponse where enigme_id =".$row[1];
+            $resultReponse = pg_query($conn, $queryReponse);
+            while($rowReponse = pg_fetch_row($resultReponse)){
+                $reponse = array("reponse"=>$rowReponse[0],"estCorrect"=>$rowReponse[1]);
+                array_push($reponses,$reponse);
+            }
+            $fc->addFeature(new Feature($row[0], json_decode($row[3]),array("question"=>$row[2],"reponses"=>$reponses)));
+        }
+        return json_encode($fc);
+    }
+    
+    public function testPosition($lat,$lon){
+        $conn_string = "host=ogovm port=5432 dbname=discover user=postgres password=postgres connect_timeout=1";
+        $conn = pg_connect($conn_string);
+        
+        $query="select ST_Distance(ST_GeomFromText('POINT ".$lat." ".$lon."'),".$posEtape.")";
+        $distance = pg_fetch_result($query);
+        
+        if($distance <= 550){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 }
