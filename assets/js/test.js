@@ -1,12 +1,16 @@
 
 
-$("document").ready(function(){
+$(document).ready(function(){
     
     findCanton();
 
 });
     
-    
+ 
+/**
+ * 
+ * @returns {undefined}
+ */
 function findCanton(){
 
     $.getJSON(
@@ -29,7 +33,7 @@ function findCanton(){
                     $.each(value, function(key2, value2){
                         
                         var li = $('<li/>')
-                        var a = $('<a href="#'+value2.parcours_id+'"/>').html(value2.nom)
+                        var a = $('<a href="mobile_map.html?id'+value2.parcours_id+'"/>').html(value2.nom)
                        
                         li.append(a)
                         ul.append(li)

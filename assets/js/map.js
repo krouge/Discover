@@ -52,7 +52,7 @@ $(document).ready(function() {
                             break;
                     }
                     //var img = (feature.attributes.type == '1') ? 'dot_1.png' : 'dot_2.png';
-                    var path = 'assets/img/';
+                    var path = '../assets/img/';
                     return path + img;
                 }
             }
@@ -147,7 +147,7 @@ $(document).ready(function() {
         }
         console.log(nbrPoints);
         if (nbrPoints < 5 && $(".content." + actualLayer).length == 0) {
-            $("#etapes").append('<div class="content ' + actualLayer + '"><img src="assets/img/dot_' + actualLayer + '.png" /> <a href="#" class="replace" name="' + actualLayer + '">replacer</a> - <a href="#" class="edit" name="' + actualLayer + '">modifier les infos</a></div></span>');
+            $("#etapes").append('<div class="content ' + actualLayer + '"><img src="../assets/img/dot_' + actualLayer + '.png" /> <a href="#" class="replace" name="' + actualLayer + '">replacer</a> - <a href="#" class="edit" name="' + actualLayer + '">modifier les infos</a></div></span>');
             if (actualLayer < 5) {
                 console.log("set layer suivant");
                 control.layer = eval("pointLayer" + (actualLayer + 1));
@@ -217,11 +217,11 @@ $(document).ready(function() {
                 }
                 affichageReponses += '<span class="reponseContent"><div style="float:left; width:400px"><input type="text" name="rep1" id="rep1" value="' + feature.attributes.reponses[i] + '" /></div><div style="float:left; width:100px; text-align:center"><input type="radio" name="reponses" value="1" ' + checked + '/></div></span>';
                 if (i == 0) {
-                    affichageReponses += '<a href="#" class="addQuestion" onclick="addQuestion();"><img src="assets/img/add.png" /></a></span>';
+                    affichageReponses += '<a href="#" class="addQuestion" onclick="addQuestion();"><img src="../assets/img/add.png" /></a></span>';
                 }
             }
         } else {
-            affichageReponses = '<span class="reponseContent"><div style="float:left; width:400px"><input type="text" name="rep1" id="rep1" /></div><div style="float:left; width:100px; text-align:center"><input type="radio" name="reponses" value="1"/></div></div><a href="#" class="addQuestion" onclick="addQuestion();"><img src="assets/img/add.png" /></a></span>';
+            affichageReponses = '<span class="reponseContent"><div style="float:left; width:400px"><input type="text" name="rep1" id="rep1" /></div><div style="float:left; width:100px; text-align:center"><input type="radio" name="reponses" value="1"/></div></div><a href="#" class="addQuestion" onclick="addQuestion();"><img src="../assets/img/add.png" /></a></span>';
         }
         //affichageReponses += '</div>';
         popup = new OpenLayers.Popup.AnchoredBubble("featurePopup",
@@ -280,7 +280,7 @@ $(document).ready(function() {
     }
     $(document).on('click', '.addQuestion', function() {
         alert("test");
-        $(".enigmeContent").append('<div style="float:left; width:400px"><input type="text" name="rep1" id="rep1" /></div><div style="float:left; width:100px; text-align:center"><input type="radio" /></div><img src="assets/img/add.png" />');
+        $(".enigmeContent").append('<div style="float:left; width:400px"><input type="text" name="rep1" id="rep1" /></div><div style="float:left; width:100px; text-align:center"><input type="radio" /></div><img src="../assets/img/add.png" />');
 
     });
 

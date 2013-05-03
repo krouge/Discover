@@ -1,136 +1,68 @@
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>My first WebPgRouting app</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <meta name="author" content="">
+  <head>
+    <meta charset="utf-8">
+    <title>My first WebPgRouting app</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-        <!-- Le styles -->
-        <link href="assets/css/bootstrap.css" rel="stylesheet">
-        <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
-        <style type="text/css">
+    <link href="assets/css/jquery.mobile-1.3.1" rel="stylesheet">
+        
+    
+    <style type="text/css">
+      
+      #Logo {
+          
+        display: block;
+        margin: 1em auto 0;
+        width: 100%;
+      }
+      #intro {
+          
+        text-align: center;
+        margin-bottom: 50px;
+      }
+      
 
-            #map {
-                width: 100%;
-                height: 100%;
-                position:absolute;
-            }
-            /* correct a bug with bootstrap */
-            #map img {
-                max-width: inherit;
+     }
+    </style>
+ 
+  </head>
 
-            }
-            .actions {
-                margin-bottom: 1em;
-            }
+  <body>
 
-            #sidebar{
-                width:240px;
-                height:auto;
-                position:absolute;
-                left:0px;
-                top: 150px;
-                z-index: 90;
-            }
-            .content{
-                background-color: white;
-                border: 1px solid black;
-                opacity: 0.7;
-            }
-            .content:hover{
-                opacity: 1;
-            }
-            #remove{
-                visibility: hidden;
-                float:left;
-                margin-top:3px;
-            }
-            #save{
-                background-color:#0d8ab6;
-                border: 2px solid white;
-                border-radius: 5px;
-                text-align: center;
-                color: white;
-                visibility: hidden;
-                float:left;
-                margin-top: 2px;
-                padding: 5px;
-            }
-            #saveBox{
-                position:absolute;
-                background-color:black;
-                opacity: 0.7;
-                width:100%;
-                height:100%;
-                left:0px;
-                top: 0px;
-                z-index: 91;
-                text-align:center;
-                visibility:hidden;
+    <div data-role="page">
+      <div data-role="header" data-theme="b">
+         <h1>Discover</h1>
+      </div>
+      <div data-role="content" >
+       
+          <img id="Logo" src="assets/img/discover.png">
+          
+          <a href="canton.html" data-role="button" data-inline="true">Recherche par Canton</a>
+          <a href="mobile_map_position.html" data-role="button" data-inline="true">Utiliser ma position</a>
+            
+      </div>
+   </div>
 
-            }
-            #saveContent{
-                position:absolute;
-                background-color:white;
-                opacity: 1;
-                width:500px;
-                height:230px;
-                z-index: 102;
-                text-align:center;
-                left: 47%; 
-                margin-left: -200px;
-                top: 200px;
-                visibility:hidden;
-                padding-top: 30px;
-            }
+   
 
 
-        </style>
-
-
-        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-        <!--[if lt IE 9]>
-          <script src="assets/js/html5shiv.js"></script>
-        <![endif]-->
-    </head>
-
-    <body>
-        <div id="saveContent">
-            <label for="nomParcours">Nom du parcours :</label>
-            <input type="text" name="nomParcours" id="nomParcours"/>
-            <label for="region">Région de départ :</label>
-            <select name="lieuParcours" id="lieuParcours">
-                <option value="vaud">Vaud</option>
-                <option value="valais">Valais</option>
-                <option value="fribourg">Fribourg</option>
-                <option value="neuchatel">Neuchâtel</option>
-            </select><br/><br/>
-            <input type="submit" id="ajouter" value="Enregistrer le parcours" />
-            <input type="button" id="annuler" value="Annuler" />
-        </div>
-        <div id="saveBox"></div>
-        <div id="sidebar">
-            <div id="etapes"></div>
-            <div id="remove"><img src="assets/img/remove.png" /></div>
-            <div id="save">Sauvegarder</div>
-        </div>
-
-        <div id="map"></div>
-    </div>
-    <div class="footer">
-        <p>&copy; <a href="http://www.heig-vd.ch">heig-vd</a> 2013</p>
-
-
-        <!-- Le javascript
-        ================================================== -->
-        <!-- Placed at the end of the document so the pages load faster -->
         <script src="assets/js/jquery.js"></script>
-        <script src="assets/js/bootstrap.js"></script>
+        <script src="assets/js/jquery.mobile-1.3.1"></script>
+        <script>
+   $(document).ready(function(){
+       $.mobile.defaultPageTransition = 'none';
+       jQuery(document).on('pagehide', 'div', function(event, ui){
+            var page = jQuery(event.target);
 
-        <script src="assets/js/openlayers/OpenLayers.js"></script>
-        <script src="assets/js/map.js"></script>
-</body>
+            if(page.attr('data-cache') == 'never'){
+                page.remove();
+            }
+        });
+    });
+    </script>
+  </body>
 </html>
