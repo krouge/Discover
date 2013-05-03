@@ -15,6 +15,26 @@ var marker;
 var lgpx;
 var latEtape;
 var lonEtape;
+var refreshIntervalId;
+
+function areYouSure(text1, text2, button, callback) {
+    $("#sure .sure-1").text(text1);
+    
+    var obj = lgpx.features[0].attributes.reponses;
+    
+    for (var i =0;obj.length;i++){
+        
+        //console.log(question[i].reponse)
+        var a = $('<a href="#" data-role="button" data-theme="b" data-rel="back"/>').html(obj[i].reponse);
+
+        $("#sureContent").append(a);
+        }
+        $("#sure .sure-do").text(button).on("click.sure", function() {
+        callback();
+        $(this).off("click.sure");
+        });
+        $.mobile.changePage("#sure");
+}
 
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     var R = 6371; // Radius of the earth in km
@@ -65,7 +85,7 @@ $(document).ready(function() {
             externalGraphic: "assets/img/dot_1.png",
             strokeColor: "#FF0000",
             graphicHeight: 40,
-            graphicYOffset: -43,
+            graphicYOffset: -43
         })
     });
     
@@ -92,7 +112,11 @@ $(document).ready(function() {
     
     
     onMapLoaded();
-    setInterval('changePosition();', 1000)
+    refreshIntervalId = setInterval('changePosition();', 1000);
+
+/* later */
+
+    //setInterval('changePosition();', 1000)
 });
 
 
@@ -126,7 +150,7 @@ function currentPositionSuccess(location) {
 
 
 
-    var zoom = 18;
+    var zoom = 14;
     markers = new OpenLayers.Layer.Markers("Markers");
     map.addLayer(markers);
     marker = new OpenLayers.Marker(lonLat);
@@ -182,8 +206,8 @@ function changePosition() {
              console.log(data);*/
             markers.removeMarker(marker);
 
-            currentLat += 0.00030;
-            currentLon += 0.00012;
+            currentLat += 0.00040;
+            currentLon += 0.00022;
 
             lonLat = new OpenLayers.LonLat(currentLon, currentLat)
                     .transform(
@@ -199,12 +223,27 @@ function changePosition() {
             markers.addMarker(marker);
 
             map.addLayer(markers);
+            map.setCenter(lonLat);
+            
+        }else{
+            
+            clearInterval(refreshIntervalId);
+           areYouSure(lgpx.features[0].attributes.question, lgpx.features[0].attributes.reponses, "Exit", function() {
+// user has confirmed, do stuff
+});
+            
+            
+            
         }
     }
-    //
+    
+
 
 }
 
+function onPopupClose(){
+    
+}
 
 
 
