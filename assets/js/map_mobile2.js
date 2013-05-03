@@ -9,11 +9,12 @@ var selfIsSelected = false;
 var firstPosition = true;
 var interval;
 var lonLat;
+var lonLat2;
 var markers;
 var marker;
 var lgpx;
 var latEtape;
-var lonEtape
+var lonEtape;
 
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     var R = 6371; // Radius of the earth in km
@@ -91,7 +92,7 @@ $(document).ready(function() {
     
     
     onMapLoaded();
-    setInterval('changePosition();', 2000)
+    setInterval('changePosition();', 1000)
 });
 
 
@@ -118,12 +119,13 @@ function currentPositionSuccess(location) {
     currentLon = location.coords.longitude;
     
     lonLat = new OpenLayers.LonLat(currentLon, currentLat)
-    .transform(
-        new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-        map.getProjectionObject() // to Spherical Mercator Projection
-        );
-    
-    
+            .transform(
+            new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+            map.getProjectionObject() // to Spherical Mercator Projection
+            );
+
+
+
     var zoom = 18;
     markers = new OpenLayers.Layer.Markers("Markers");
     map.addLayer(markers);
@@ -153,42 +155,53 @@ function errorCallback(error) {
 function changePosition() {
     
     if (lgpx.features[0] != undefined) {
-        
-        
-        $.get("dispatcher.php", {
-            controlleur: "Parcours",
-            action: "testPosition",
-            lat: lonLat.lat,
-            lon: lonLat.lon,
-            latEtape: lgpx.features[0].geometry.y,
-            lonEtape: lgpx.features[0].geometry.x,
-        },
-        function(data) {
-            console.log(data);
-            console.log(lgpx.features[0].geometry.x);
-            console.log(data);
-            markers.removeMarker(marker);
+        console.log(lgpx);
+        lonLat2 = new OpenLayers.LonLat(lgpx.features[0].geometry.x, lgpx.features[0].geometry.y)
+                .transform(map.getProjectionObject()
+                , new OpenLayers.Projection("EPSG:4326") // transform from WGS 1984
+                // to Spherical Mercator Projection
+                );
+
+        if (getDistanceFromLatLonInKm(currentLat, currentLon, lonLat2.lat, lonLat2.lon) >= 0.07) {
             
+            
+            //Fonction de base faisant une requête vers le serveur, qui va calculer la distance via ST_Distance. Comme le serveur est trop lent,
+            //une alternative en javascript est utilisée pour la démo
+
+            /*$.get("dispatcher.php", {
+             controlleur: "Parcours",
+             action: "testPosition",
+             lat: lonLat.lat,
+             lon: lonLat.lon,
+             latEtape: lgpx.features[0].geometry.y,
+             lonEtape: lgpx.features[0].geometry.x,
+             },
+             function(data) {*/
+            /*console.log(data);
+             console.log(lgpx.features[0].geometry.x);
+             console.log(data);*/
+            markers.removeMarker(marker);
+
             currentLat += 0.00030;
             currentLon += 0.00012;
-            
+
             lonLat = new OpenLayers.LonLat(currentLon, currentLat)
-            .transform(
-                new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
-                map.getProjectionObject() // to Spherical Mercator Projection
-                );
-            
-            
+                    .transform(
+                    new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+                    map.getProjectionObject() // to Spherical Mercator Projection
+                    );
+
+
+
             marker = new OpenLayers.Marker(lonLat);
             //console.log(lgpx.features[0].geometry.x);
-            
+
             markers.addMarker(marker);
-            
+
             map.addLayer(markers);
         }
-        );
-    //console.log(getDistanceFromLatLonInKm(currentLat,currentLon,lgpx.features[0].geometry.y,lgpx.features[0].geometry.x));
     }
+    //
 
 }
 
