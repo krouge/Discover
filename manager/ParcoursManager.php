@@ -122,7 +122,7 @@ class ParcoursManager {
 
         $fc = new FeatureCollection();
         while ($row = pg_fetch_row($result)) {
-            $fc->addFeature(new Feature($row[1], json_decode($row[4]),array("nom"=>$row[1],"canton"=>$row[2],"nbrEtapes"=>$row[3])));
+            $fc->addFeature(new Feature($row[0], json_decode($row[4]),array("nom"=>$row[1],"canton"=>$row[2],"nbrEtapes"=>$row[3])));
         }
 
         return json_encode($fc);

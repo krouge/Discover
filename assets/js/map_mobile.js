@@ -89,6 +89,7 @@ $(document).ready(function() {
                 control.unselect(this.feature);
             }
     function onFeatureSelect(evt) {
+        console.log(evt.feature);
         feature = evt.feature;
         popup = new OpenLayers.Popup.FramedCloud("featurePopup",
                 feature.geometry.getBounds().getCenterLonLat(),
@@ -96,7 +97,7 @@ $(document).ready(function() {
                 '<h2>' + feature.attributes.nom + '</h2>' +
                 'Canton de départ: '+feature.attributes.canton+'<br />'+
                 'Nombre d\'étapes: '+feature.attributes.nbrEtapes+'<br />'+
-                '<input type="submit" id="choixParcours" value="Jouer!" />',
+                '<a href="mobile_map.html?id='+feature.fid+'">Jouer!<h2></a>',
                 null,
                 true,
                 onPopupClose
