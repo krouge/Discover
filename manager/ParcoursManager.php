@@ -41,7 +41,7 @@ class ParcoursManager {
     }
 
     public function enregistrerParcours($nomParcours, $lieuParcours, $json) {
-        $conn_string = "host=ogovm port=5432 dbname=discover user=postgres password=postgres connect_timeout=1";
+        $conn_string = "host=192.168.2.130 port=5432 dbname=discover user=postgres password=postgres connect_timeout=1";
         $conn = pg_connect($conn_string);
 
         $queryParcours = "INSERT INTO parcours (nom, canton) VALUES ('" . $nomParcours . "','" . $lieuParcours . "')";
@@ -79,7 +79,7 @@ class ParcoursManager {
     }
 
     public function getAllParcours() {
-        $conn_string = "host=ogovm port=5432 dbname=discover user=postgres password=postgres connect_timeout=1";
+        $conn_string = "host=192.168.2.130 port=5432 dbname=discover user=postgres password=postgres connect_timeout=1";
         $conn = pg_connect($conn_string);
 
         $query = "select distinct on (parcours.parcours_id) parcours.parcours_id, parcours.nom, parcours.canton, (SELECT count(etape_id) from etape where parcours_id = parcours.parcours_id) as nbr_etapes ,ST_AsGeoJSON(position), etape_id from etape inner join parcours on etape.parcours_id =parcours.parcours_id order by parcours.parcours_id";  // essayez avec 'Africa'
@@ -99,7 +99,7 @@ class ParcoursManager {
     }
     
     public function getParcours($id,$numEtape) {
-        $conn_string = "host=ogovm port=5432 dbname=discover user=postgres password=postgres connect_timeout=1";
+        $conn_string = "host=192.168.2.130 port=5432 dbname=discover user=postgres password=postgres connect_timeout=1";
         $conn = pg_connect($conn_string);
 
         $query = "select etape.etape_id, enigme_id, question, ST_AsGeoJSON(position) from etape inner join enigme on etape.etape_id = enigme.etape_id where parcours_id = ".$id."limit 1 offset ".($numEtape - 1);  // essayez avec 'Africa'
@@ -124,7 +124,7 @@ class ParcoursManager {
     }
     
     public function testPosition($lat,$lon,$latEtape,$lonEtape){
-        $conn_string = "host=ogovm port=5432 dbname=discover user=postgres password=postgres connect_timeout=1";
+        $conn_string = "host=192.168.2.130 port=5432 dbname=discover user=postgres password=postgres connect_timeout=1";
         $conn = pg_connect($conn_string);
         
         $query="select ST_Distance(ST_GeomFromText('POINT (".$lon." ".$lat.")'),ST_GeomFromText('POINT (".$lonEtape." ".$latEtape.")'))";
@@ -135,6 +135,13 @@ class ParcoursManager {
         }else{
             return "false";
         }
+    }
+    
+    public function getEnigmeByEtape(){
+        $conn_string = "host=192.168.2.130 port=5432 dbname=discover user=postgres password=postgres connect_timeout=1";
+        $conn = pg_connect($conn_string);
+        
+        $query;
     }
 
 }

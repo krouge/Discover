@@ -47,10 +47,10 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     var dLat = deg2rad(lat2 - lat1);  // deg2rad below
     var dLon = deg2rad(lon2 - lon1);
     var a =
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2)
-            ;
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2)
+    ;
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c; // Distance in km
     return d;
@@ -75,27 +75,27 @@ function GetURLParameter(sParam)
 }
 
 $(document).ready(function() {
-
+    
     map = new OpenLayers.Map({
         div: "map",
         projection: new OpenLayers.Projection("EPSG:900913"),
         units: 'm'
     });
-
-
+    
+    
     var osm = new OpenLayers.Layer.OSM();
     map.addLayer(osm);
-
+    
     var myStyles = new OpenLayers.StyleMap({
         "default": new OpenLayers.Style({
             externalGraphic: "assets/img/dot_1.png",
             strokeColor: "#FF0000",
             graphicHeight: 40,
-            graphicYOffset: -43,
+            graphicYOffset: -43
         })
     });
-
-
+    
+    
     lgpx = new OpenLayers.Layer.Vector("Etape", {
         styleMap: myStyles,
         protocol: new OpenLayers.Protocol.HTTP({
@@ -110,13 +110,13 @@ $(document).ready(function() {
         }),
         strategies: [new OpenLayers.Strategy.Fixed()],
         projection: new OpenLayers.Projection("EPSG:21781")
-
+    
     });
     map.addLayer(lgpx);
     //console.log(lgpx);
     //console.log(lgpx.features.0);
-
-
+    
+    
     onMapLoaded();
     refreshIntervalId = setInterval('changePosition();', 1000);
 });
@@ -124,13 +124,13 @@ $(document).ready(function() {
 
 
 function onMapLoaded() {
-
-
+    
+    
     navigator.geolocation.getCurrentPosition(currentPositionSuccess, errorCallback, {
         enableHighAccuracy: true,
         timeout: 3000,
         maximumAge: 0
-
+    
     });
 
 }
@@ -140,10 +140,10 @@ function onMapLoaded() {
  * Fonction appelée lorsque l'annonce de la position a correctement fonctionné
  */
 function currentPositionSuccess(location) {
-
+    
     currentLat = location.coords.latitude;
     currentLon = location.coords.longitude;
-
+    
     lonLat = new OpenLayers.LonLat(currentLon, currentLat)
             .transform(
             new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
@@ -152,7 +152,7 @@ function currentPositionSuccess(location) {
 
 
 
-    var zoom = 18;
+    var zoom = 14;
     markers = new OpenLayers.Layer.Markers("Markers");
     map.addLayer(markers);
     marker = new OpenLayers.Marker(lonLat);
@@ -179,7 +179,7 @@ function errorCallback(error) {
 
 
 function changePosition() {
-
+    
     if (lgpx.features[0] != undefined) {
         console.log(lgpx);
         lonLat2 = new OpenLayers.LonLat(lgpx.features[0].geometry.x, lgpx.features[0].geometry.y)
@@ -211,8 +211,8 @@ function changePosition() {
              console.log(data);*/
             markers.removeMarker(marker);
 
-            currentLat += 0.00030;
-            currentLon += 0.00012;
+            currentLat += 0.00040;
+            currentLon += 0.00022;
 
             lonLat = new OpenLayers.LonLat(currentLon, currentLat)
                     .transform(
