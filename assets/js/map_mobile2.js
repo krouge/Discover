@@ -16,25 +16,31 @@ var lgpx;
 var latEtape;
 var lonEtape;
 var refreshIntervalId;
+var aReponduQuestion = false;
+var pointInterval = 0;
 
-function areYouSure(text1, text2, button, callback) {
-    $("#sure .sure-1").text(text1);
-    
-    var obj = lgpx.features[0].attributes.reponses;
-    
-    for (var i =0;obj.length;i++){
-        
-        //console.log(question[i].reponse)
-        var a = $('<a href="#" data-role="button" data-theme="b" data-rel="back"/>').html(obj[i].reponse);
-
-        $("#sureContent").append(a);
-        }
-        $("#sure .sure-do").text(button).on("click.sure", function() {
-        callback();
-        $(this).off("click.sure");
-        });
-        $.mobile.changePage("#sure");
+function areYouSure(callback) {
+  $("#sure .sure-1").text(lgpx.features[0].attributes.question);
+  for (var i=0;i<lgpx.features[0].attributes.reponses.length;i++){
+      if(lgpx.features[0].attributes.reponses[i].estcorrect == (i-1)){
+      var a = $('<a href="#" data-role="button" data-theme="c" data-rel=""/>');
+      }else{
+      var a = $('<a href="#" data-role="button" data-theme="c" data-rel="back" id="estCorrect" />');
+      }
+      a.html(lgpx.features[0].attributes.reponses[i].reponse);
+      //console.log(reponse);
+      $("#sureContent").append(a);
+  }
+  $.mobile.changePage("#sure");
 }
+
+$(document).on('click', '#estCorrect', function() {
+        alert("Bravo, la réponse est correcte!");
+        pointInterval = 0;
+        aReponduQuestion = true;
+        refreshIntervalId = setInterval('changePosition();', 1000);
+        
+    });
 
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     var R = 6371; // Radius of the earth in km
@@ -113,10 +119,6 @@ $(document).ready(function() {
     
     onMapLoaded();
     refreshIntervalId = setInterval('changePosition();', 1000);
-
-/* later */
-
-    //setInterval('changePosition();', 1000)
 });
 
 
@@ -186,9 +188,12 @@ function changePosition() {
                 // to Spherical Mercator Projection
                 );
 
-        if (getDistanceFromLatLonInKm(currentLat, currentLon, lonLat2.lat, lonLat2.lon) >= 0.07) {
+        if (getDistanceFromLatLonInKm(currentLat, currentLon, lonLat2.lat, lonLat2.lon) >= 0.07 || aReponduQuestion == true) {
             
-            
+            pointInterval++;
+            if(pointInterval >= 6){
+                aReponduQuestion = false;
+            }
             //Fonction de base faisant une requête vers le serveur, qui va calculer la distance via ST_Distance. Comme le serveur est trop lent,
             //une alternative en javascript est utilisée pour la démo
 
@@ -223,27 +228,34 @@ function changePosition() {
             markers.addMarker(marker);
 
             map.addLayer(markers);
-            map.setCenter(lonLat);
-            
+            map.setCenter(lonLat, 18);
+            console.log(lgpx.features[0].attributes.reponses[0].reponse)
         }else{
-            
+            /*
+                feature = lgpx.features[0];
+                popup = new OpenLayers.Popup.FramedCloud("featurePopup",
+                feature.geometry.getBounds().getCenterLonLat(),
+                new OpenLayers.Size(100, 100),
+                '<h2>' + feature.attributes.nom + '</h2>' +
+                'Canton de départ: '+feature.attributes.canton+'<br />'+
+                'Nombre d\'étapes: '+feature.attributes.nbrEtapes+'<br />'+
+                '<a href="mobile_map.html?id='+feature.fid+'">Jouer!<h2></a>',
+                null,
+                true,
+                onPopupClose
+                ); 
+        map.addPopup(popup);*/
             clearInterval(refreshIntervalId);
-           areYouSure(lgpx.features[0].attributes.question, lgpx.features[0].attributes.reponses, "Exit", function() {
-// user has confirmed, do stuff
+            areYouSure(function() {
+  // user has confirmed, do stuff
 });
-            
-            
-            
         }
     }
-    
-
 
 }
-
-function onPopupClose(){
-    
-}
+   function onPopupClose(evt) {
+                map.removePopup(map.popups[0])
+            }
 
 
 
